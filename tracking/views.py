@@ -46,7 +46,7 @@ class TrackingNumberGenerator(APIView):
         tracking_number = f"{short_uuid[:8]}{origin_country_id}{destination_country_id}"
 
         # Store the tracking number in the cache
-        cache.set(cache_key, tracking_number + "%" + datetime.now().isoformat(), timeout=86400)  # Cache for 1 day (or set timeout as needed)
+        cache.set(cache_key, tracking_number + "%" + datetime.now().isoformat(), timeout=86400 * 14)  # Cache for 14 days (or set timeout as needed)
 
         response_data = {
             "tracking_number": tracking_number,

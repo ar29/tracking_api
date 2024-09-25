@@ -94,8 +94,8 @@ CACHES = {
         }
     }
 }
-# Set cache timeout to a reasonable value (e.g., 1 year in seconds)
-CACHE_TTL = 86400 * 365
+# Set cache timeout to a reasonable value (e.g., 14 days in seconds)
+CACHE_TTL = 86400 * 14
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'  # Use the default cache (Redis) for session storage
