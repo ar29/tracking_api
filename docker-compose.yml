@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Database - Master (for writes)
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    networks:
+      - app-network
+
+  # Redis Cache
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  # Web App 1
+  web1:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DEBUG: 'true'
+      DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase
+    networks:
+      - app-network
+
+  # Web App 2 (Another Django instance)
+  web2:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DEBUG: 'true'
+      DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase
+    networks:
+      - app-network
+
+  # HAProxy Load Balancer
+  haproxy:
+    image: haproxy:alpine
+    ports:
+      - "8000:8000"  # External port exposed
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - web1
+      - web2
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
