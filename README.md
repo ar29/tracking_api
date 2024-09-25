@@ -34,8 +34,7 @@ Create a .env file in the project root and add the following environment variabl
 
 ```bash
 DEBUG=True
-DATABASE_URL=postgres://myuser:mypassword@db-master:5432/mydatabase
-SLAVE_DATABASE_URL=postgres://myuser:mypassword@db-slave:5432/mydatabase
+DATABASE_URL=postgres://myuser:mypassword@db:5432/mydatabase
 REDIS_URL=redis://redis:6379/1
 SECRET_KEY=your-secret-key
 ```
@@ -144,7 +143,7 @@ heroku login
 You can create a Heroku app via CLI, specifying that you’ll be using Docker:
 
 ```bash
-heroku create tracking_api   s --stack=container
+heroku create tracking_api --stack=container
 ```
 
 This sets up your Heroku app to use Docker.
